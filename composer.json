@@ -1,0 +1,21 @@
+{
+    "name": "mmdm/sim-session",
+    "description": "A simple yet nice session management library",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "MMDM",
+            "email": "mmdehghan95@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Sim\\Session\\": "src/"
+        }
+    },
+    "require": {
+        "php": ">=7.2",
+        "mmdm/sim-crypt": "^1.0"
+    }
+}
