@@ -306,26 +306,32 @@ class Session implements ISession
      */
     protected function prepareGetSessionValue($theArray)
     {
-
-        $arr = json_decode($theArray, true);
-        if (is_null($arr) || !isset($arr['simplicity_data']) || !isset($arr['simplicity_is_encrypted'])) return $theArray;
-
-        $arr2 = $arr['simplicity_data'];
-        if (!is_null($this->crypt) && $arr['simplicity_is_encrypted']) {
-            $arr2 = $this->crypt->decrypt($arr2);
-            if ($this->crypt->hasError()) {
-                return null;
+        if (is_array($theArray)) {
+            foreach ($theArray as $k => $v) {
+                $theArray[$k] = $this->prepareGetSessionValue($v);
             }
+        } elseif (is_string($theArray)) {
+            $arr = json_decode($theArray, true);
+            if (is_null($arr) || !isset($arr['simplicity_data']) || !isset($arr['simplicity_is_encrypted'])) return $theArray;
+
+            $arr2 = $arr['simplicity_data'];
+            if (!is_null($this->crypt) && $arr['simplicity_is_encrypted']) {
+                $arr2 = $this->crypt->decrypt($arr2);
+                if ($this->crypt->hasError()) {
+                    return null;
+                }
+            }
+            $arr2 = json_decode($arr2, true);
+            if ($arr2['is_timed']) {
+                if ($arr2['ttl'] < time()) return null;
+            }
+            $value = $arr2['data'];
+            if (is_string($value)) {
+                $value = htmlspecialchars_decode($value);
+            }
+            return $value;
         }
-        $arr2 = json_decode($arr2, true);
-        if ($arr2['is_timed']) {
-            if ($arr2['ttl'] < time()) return null;
-        }
-        $value = $arr2['data'];
-        if (is_string($value)) {
-            $value = htmlspecialchars_decode($value);
-        }
-        return $value;
+        return $theArray;
     }
 
     /**
