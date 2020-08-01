@@ -15,8 +15,8 @@ try {
 }
 
 $session = new Session($crypt);
-$session->set('key1', 'hello');
-$hello = $session->get('key1');
+$session->set('key1.key2', 'hello');
+$hello = $session->get('key1.key2');
 echo PHP_EOL . $hello . PHP_EOL;
 
 $session->setFlash('key2', 'I am flash data');
