@@ -1,0 +1,56 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "9102d3b910b0741e1c4635045d860af8",
+    "packages": [
+        {
+            "name": "mmdm/sim-crypt",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/mmdm95/sim-crypt.git",
+                "reference": "57df8b4157ed7baac8d267589d2f16ddb3494ed8"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/mmdm95/sim-crypt/zipball/57df8b4157ed7baac8d267589d2f16ddb3494ed8",
+                "reference": "57df8b4157ed7baac8d267589d2f16ddb3494ed8",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Sim\\Crypt\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "MMDM",
+                    "email": "mmdehghan95@gmail.com"
+                }
+            ],
+            "description": "A simple yet nice encryption/decryption library",
+            "time": "2020-07-27T11:58:46+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {
+        "php": ">=7.2"
+    },
+    "platform-dev": []
+}
