@@ -279,7 +279,6 @@ class Session implements ISession
     {
         if (is_string($value)) {
             $value = htmlspecialchars($value);
-
         }
 
         $val = json_encode([
