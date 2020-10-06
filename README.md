@@ -53,7 +53,7 @@ as last parameter of set methods.
 
 ## Available functions
 
-- start($regenerate = false)
+- start(bool $regenerate = false, bool $delete_old_session = false)
 
 This method starts session. To regenerate it, pass true as 
 first argument.
@@ -64,6 +64,9 @@ $session->start();
 // regnerate session id
 $session->start(true);
 ```
+
+**NOTE:** By default it'll not delete previous session but you can 
+make this happen by send boolean as second parameter.
 
 - close()
 
