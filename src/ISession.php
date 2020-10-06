@@ -124,9 +124,10 @@ interface ISession
      * Start/Restart a session
      *
      * @param bool $regenerate
+     * @param bool $delete_old_session
      * @return ISession
      */
-    public function start($regenerate = false): ISession;
+    public function start(bool $regenerate = false, bool $delete_old_session = false): ISession;
 
     /**
      * Destroy a started session

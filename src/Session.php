@@ -231,13 +231,13 @@ class Session implements ISession
     /**
      * {@inheritdoc}
      */
-    public function start($regenerate = false): ISession
+    public function start(bool $regenerate = false, bool $delete_old_session = false): ISession
     {
         if (!$this->hasStart()) {
             session_start();
         }
-        if (true === $regenerate) {
-            session_regenerate_id(true);
+        if ($regenerate) {
+            session_regenerate_id($delete_old_session);
         }
         return $this;
     }
