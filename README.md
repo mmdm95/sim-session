@@ -58,6 +58,8 @@ as last parameter of set methods.
 This method starts session. To regenerate it, pass true as 
 first argument.
 
+**NOTE:** It checks if session is started yet, if not then start it.
+
 ```php
 // start PHP sessions
 $session->start();
