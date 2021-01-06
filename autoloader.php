@@ -11,6 +11,9 @@ spl_autoload_register(function ($class) {
         "{$namespace}\\" => [
             __DIR__ . '/src',
         ],
+        "Sim\\Crypt\\" => [
+            __DIR__ . '/vendor/mmdm/sim-crypt/src',
+        ],
     ];
 
     foreach ($prefixes as $prefix => $dirs) {
