@@ -3,7 +3,7 @@
 namespace Sim\Session;
 
 use Sim\Crypt\ICrypt;
-use Sim\Session\Utils\ArrayUtil;
+use Sim\Session\Utils\SessionArrayUtil;
 
 class Session implements ISession
 {
@@ -13,11 +13,17 @@ class Session implements ISession
     protected $crypt = null;
 
     /**
-     * Session flash data identifier
+     * Flash data identifier
+     *
      * @var $flash_prefix string
      */
     protected $flash_prefix = '__simplicity_flash_data';
 
+    /**
+     * Timed data identifier
+     *
+     * @var string
+     */
     protected $timed_prefix = '__simplicity_timed_data';
 
     /**
@@ -36,7 +42,7 @@ class Session implements ISession
     public function set(string $key, $value, bool $encrypt = true): ISession
     {
         if ($this->hasStart()) {
-            ArrayUtil::set($_SESSION, $key, $this->prepareSetSessionValue($value, $encrypt));
+            SessionArrayUtil::set($_SESSION, $key, $this->prepareSetSessionValue($value, $encrypt));
         }
         return $this;
     }
@@ -50,7 +56,7 @@ class Session implements ISession
         if ($this->hasStart()) {
             if (!is_null($key)) {
                 if ($this->has($key)) {
-                    return $this->prepareGetSessionValue(ArrayUtil::get($_SESSION, $key));
+                    return $this->prepareGetSessionValue(SessionArrayUtil::get($_SESSION, $key));
                 }
             } else {
                 // To get all sessions
@@ -72,7 +78,7 @@ class Session implements ISession
     public function remove(string $key): ISession
     {
         if ($this->hasStart()) {
-            ArrayUtil::remove($_SESSION, $key);
+            SessionArrayUtil::remove($_SESSION, $key);
         }
         return $this;
     }
@@ -83,7 +89,7 @@ class Session implements ISession
     public function has(string $key): bool
     {
         if ($this->hasStart()) {
-            return ArrayUtil::has($_SESSION, $key);
+            return SessionArrayUtil::has($_SESSION, $key);
         }
         return false;
     }
@@ -94,7 +100,7 @@ class Session implements ISession
     public function setTimed(string $key, $value, $time = 300, bool $encrypt = true): ISession
     {
         if ($this->hasStart()) {
-            ArrayUtil::set($_SESSION, $this->_dotConcatenation($this->timed_prefix, $key), $this->prepareSetSessionValue($value, $encrypt, time() + $time, true));
+            SessionArrayUtil::set($_SESSION, $this->_dotConcatenation($this->timed_prefix, $key), $this->prepareSetSessionValue($value, $encrypt, time() + $time, true));
         }
         return $this;
     }
@@ -107,7 +113,7 @@ class Session implements ISession
         if ($this->hasStart()) {
             if (!is_null($key)) {
                 if ($this->hasTimed($key)) {
-                    $timedSess = $this->prepareGetSessionValue(ArrayUtil::get($_SESSION, $this->_dotConcatenation($this->timed_prefix, $key)));
+                    $timedSess = $this->prepareGetSessionValue(SessionArrayUtil::get($_SESSION, $this->_dotConcatenation($this->timed_prefix, $key)));
                     return $timedSess;
                 }
             } else {
@@ -128,7 +134,7 @@ class Session implements ISession
     {
         if ($this->hasStart()) {
             if (!is_null($key)) {
-                ArrayUtil::remove($_SESSION, $this->_dotConcatenation($this->timed_prefix, $key));
+                SessionArrayUtil::remove($_SESSION, $this->_dotConcatenation($this->timed_prefix, $key));
             } else {
                 foreach ($_SESSION[$this->timed_prefix] as $k => $v) {
                     $this->removeTimed($k);
@@ -144,9 +150,9 @@ class Session implements ISession
     public function hasTimed(string $key): bool
     {
         if ($this->hasStart()) {
-            $has = ArrayUtil::has($_SESSION, $this->_dotConcatenation($this->timed_prefix, $key));
+            $has = SessionArrayUtil::has($_SESSION, $this->_dotConcatenation($this->timed_prefix, $key));
             if ($has) {
-                $timedSess = $this->prepareGetSessionValue(ArrayUtil::get($_SESSION, $this->_dotConcatenation($this->timed_prefix, $key)));
+                $timedSess = $this->prepareGetSessionValue(SessionArrayUtil::get($_SESSION, $this->_dotConcatenation($this->timed_prefix, $key)));
                 if (is_null($timedSess)) {
                     $this->removeTimed($key);
                     return false;
@@ -164,7 +170,7 @@ class Session implements ISession
     public function setFlash(string $key, $value, bool $encrypt = true): ISession
     {
         if ($this->hasStart()) {
-            ArrayUtil::set($_SESSION, $this->_dotConcatenation($this->flash_prefix, $key), $this->prepareSetSessionValue($value, $encrypt));
+            SessionArrayUtil::set($_SESSION, $this->_dotConcatenation($this->flash_prefix, $key), $this->prepareSetSessionValue($value, $encrypt));
         }
         return $this;
     }
@@ -177,7 +183,7 @@ class Session implements ISession
         if ($this->hasStart()) {
             if (!is_null($key)) {
                 if ($this->hasFlash($key)) {
-                    $flashSess = $this->prepareGetSessionValue(ArrayUtil::get($_SESSION, $this->_dotConcatenation($this->flash_prefix, $key)));
+                    $flashSess = $this->prepareGetSessionValue(SessionArrayUtil::get($_SESSION, $this->_dotConcatenation($this->flash_prefix, $key)));
                     if (true == (bool)$delete) {
                         $this->removeFlash($key);
                     }
@@ -207,7 +213,7 @@ class Session implements ISession
     {
         if ($this->hasStart()) {
             if (!is_null($key)) {
-                ArrayUtil::remove($_SESSION, $this->_dotConcatenation($this->flash_prefix, $key));
+                SessionArrayUtil::remove($_SESSION, $this->_dotConcatenation($this->flash_prefix, $key));
             } else {
                 foreach ($_SESSION[$this->flash_prefix] as $k => $v) {
                     $this->removeFlash($k);
@@ -223,7 +229,7 @@ class Session implements ISession
     public function hasFlash(string $key): bool
     {
         if ($this->hasStart()) {
-            return ArrayUtil::has($_SESSION, $this->_dotConcatenation($this->flash_prefix, $key));
+            return SessionArrayUtil::has($_SESSION, $this->_dotConcatenation($this->flash_prefix, $key));
         }
         return false;
     }
@@ -234,10 +240,10 @@ class Session implements ISession
     public function start(bool $regenerate = false, bool $delete_old_session = false): ISession
     {
         if (!$this->hasStart()) {
-            session_start();
+            \session_start();
         }
         if ($regenerate) {
-            session_regenerate_id($delete_old_session);
+            \session_regenerate_id($delete_old_session);
         }
         return $this;
     }
@@ -248,8 +254,8 @@ class Session implements ISession
     public function close(): ISession
     {
         if ($this->hasStart()) {
-            session_unset();
-            session_destroy();
+            \session_unset();
+            \session_destroy();
         }
         return $this;
     }
@@ -259,8 +265,8 @@ class Session implements ISession
      */
     public function hasStart()
     {
-        if (session_id()) {
-            return session_id();
+        if (\session_id()) {
+            return \session_id();
         }
         return false;
     }
@@ -277,21 +283,21 @@ class Session implements ISession
      */
     protected function prepareSetSessionValue($value, bool $encrypt, $ttl = PHP_INT_MAX, $timed = false)
     {
-        if (is_string($value)) {
-            $value = htmlspecialchars($value);
+        if (\is_string($value)) {
+            $value = \htmlspecialchars($value);
         }
 
-        $val = json_encode([
+        $val = \json_encode([
             'data' => $value,
             'is_timed' => $timed,
             'ttl' => $ttl <= PHP_INT_MAX ? $ttl : PHP_INT_MAX,
         ]);
-        if (!is_null($this->crypt) && $encrypt) {
+        if (!\is_null($this->crypt) && $encrypt) {
             $val = $this->crypt->encrypt($val);
             $val = $this->crypt->hasError() ? "" : $val;
         }
 
-        return json_encode([
+        return \json_encode([
             'simplicity_data' => $val,
             'simplicity_is_encrypted' => $encrypt,
         ]);
@@ -305,28 +311,28 @@ class Session implements ISession
      */
     protected function prepareGetSessionValue($theArray)
     {
-        if (is_array($theArray)) {
+        if (\is_array($theArray)) {
             foreach ($theArray as $k => $v) {
                 $theArray[$k] = $this->prepareGetSessionValue($v);
             }
-        } elseif (is_string($theArray)) {
-            $arr = json_decode($theArray, true);
-            if (is_null($arr) || !isset($arr['simplicity_data']) || !isset($arr['simplicity_is_encrypted'])) return $theArray;
+        } elseif (\is_string($theArray)) {
+            $arr = \json_decode($theArray, true);
+            if (\is_null($arr) || !isset($arr['simplicity_data']) || !isset($arr['simplicity_is_encrypted'])) return $theArray;
 
             $arr2 = $arr['simplicity_data'];
-            if (!is_null($this->crypt) && $arr['simplicity_is_encrypted']) {
+            if (!\is_null($this->crypt) && $arr['simplicity_is_encrypted']) {
                 $arr2 = $this->crypt->decrypt($arr2);
                 if ($this->crypt->hasError()) {
                     return null;
                 }
             }
-            $arr2 = json_decode($arr2, true);
+            $arr2 = \json_decode($arr2, true);
             if ($arr2['is_timed']) {
                 if ($arr2['ttl'] < time()) return null;
             }
             $value = $arr2['data'];
-            if (is_string($value)) {
-                $value = htmlspecialchars_decode($value);
+            if (\is_string($value)) {
+                $value = \htmlspecialchars_decode($value);
             }
             return $value;
         }

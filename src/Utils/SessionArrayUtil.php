@@ -2,7 +2,7 @@
 
 namespace Sim\Session\Utils;
 
-class ArrayUtil
+class SessionArrayUtil
 {
     /**
      * @param $array
